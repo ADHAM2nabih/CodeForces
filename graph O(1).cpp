@@ -267,6 +267,44 @@ vector<vector<ll>> Floyd_Warshall(vector<vector<ll>>v,int n)
     return v;
 }
 
+////////////////////////////////////////////////////
+
+const int N=2e5+5;
+int par[N],sz[N];
+
+void init(int n)
+{
+    for(int i=1;i<=n;i++)
+    {
+        par[i]=i;
+        sz[i]=1;
+    }
+}
+
+int findparent(int u)
+{
+    if(par[u]==u)
+        return u;
+    return par[u]=findparent(par[u]);
+}
+
+void connect(int u,int v)
+{
+    u= findparent(u);
+    v= findparent(v);
+    if(u==v)return;
+
+    if(sz[v]>sz[u])
+    {
+        par[u]=v;
+        sz[v]+=sz[u];
+    }
+    else
+    {
+        par[v]=u;
+        sz[u]+=sz[v];
+    }
+}
 
 ///////////////////////////////////////////////////
 

@@ -264,21 +264,26 @@ void dijkstra(int start, vector<pair<int, int>> adj[], int V)
 int did = 1e6+5;
 vector<long>dist(did),to(did),from(did),we(did);
 
-void bellmanford(int source)
+bool bellmanford(int source)
 {
-    for(int i=1; i<=n; i++) dist[i]=LONG_MAX;
+    bool x=0;
+    for(int i=1; i<n; i++) dist[i]=LONG_MAX;
     dist[source]=0;
-    for(int i=1; i<n; i++)
+    for(int i=0; i<n; i++)  ///////n-1 for bellman ford       n for detection of negative cycles
     {
+        int flag=0;
         for(int j=0; j<m; j++)
         {
             ll u = from[j], v = to[j], w = we[j];
             if(dist[u]+w<dist[v])
             {
                 dist[v] = dist[u]+w;
+                flag = 1;
             }
         }
+        if(i==n-1 && flag) x=1;
     }
+    return x;  // for detecting negative cycles
 }
 
 ///////////////////////////////////////////////////
@@ -403,7 +408,7 @@ int main()
         cin>>negative;
         if(negative==1)
         {
-            bellmanford(first_node);
+            cout<<"there is a negative cycle : "<<bellmanford(first_node)<<endl;
             print(dist,m);
             return 0;
         }
@@ -478,6 +483,11 @@ int main()
         }
 
     }
+
+
+
+
+
 
 }
 

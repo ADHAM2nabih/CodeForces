@@ -3,6 +3,7 @@
 #include <iostream>
 #include <set>
 #include <queue>
+#include <algorithm>
 #include <utility>
 #define ll long long
 
@@ -23,6 +24,14 @@ void print(vector<int>graph[],int v)
         cout << endl;
     }
 }
+void print(vector<long>g,int v)
+{
+    for (int i = 1; i <=v ; i++)
+    {
+        cout<<g[i]<<" ";
+    }
+    cout<<endl;
+}
 void print(vector<vector<ll>>graph,int v)
 {
     for (int i = 1; i <= v ; i++)
@@ -30,7 +39,9 @@ void print(vector<vector<ll>>graph,int v)
         cout<<i<< " : ";
         for (int j = 1; j <= v; j++)
         {
-            cout << graph[i][j] << " ";
+            if(i!=j)cout << graph[i][j] << "    ";
+            else cout<<"  .  ";
+
         }
         cout << endl;
     }
@@ -249,6 +260,26 @@ void dijkstra(int start, vector<pair<int, int>> adj[], int V)
         cout << i << "   " << dist[i] << endl;
     }
 }
+////////////////////////////////////////////////bellman ford
+int did = 1e6+5;
+vector<long>dist(did),to(did),from(did),we(did);
+
+void bellmanford(int source)
+{
+    for(int i=1; i<=n; i++) dist[i]=LONG_MAX;
+    dist[source]=0;
+    for(int i=1; i<n; i++)
+    {
+        for(int j=0; j<m; j++)
+        {
+            ll u = from[j], v = to[j], w = we[j];
+            if(dist[u]+w<dist[v])
+            {
+                dist[v] = dist[u]+w;
+            }
+        }
+    }
+}
 
 ///////////////////////////////////////////////////
 
@@ -274,7 +305,7 @@ int par[N],sz[N];
 
 void init(int n)
 {
-    for(int i=1;i<=n;i++)
+    for(int i=1; i<=n; i++)
     {
         par[i]=i;
         sz[i]=1;
@@ -306,12 +337,30 @@ void connect(int u,int v)
     }
 }
 
+ll kruskal(pair<ll,pair<ll,ll>>p[])
+{
+
+    ll x,y,cost=0,mincost=0;
+    for(int i=0; i<m; i++)
+    {
+        x = p[i].second.first;
+        y = p[i].second.second;
+        cost = p[i].first;
+        if(findparent(x)!=findparent(y))
+        {
+            mincost +=cost;
+            connect(x,y);
+        }
+    }
+    return mincost;
+}
+
 ///////////////////////////////////////////////////
 
 int main()
 {
     cin>>n>>m;
-    vector<int>graph[n+1];
+
     vector<vector<ll>> x(n+1, vector<ll>(n+1,INT_MAX));
     queue<int>que;
 
@@ -320,7 +369,9 @@ int main()
     cin>>t;
     if(t==1)
     {
+        init(n);
         vector<pair<int, int>> graph[n+1];
+        pair<ll,pair<ll,ll>> p[m];
 
         for (int i = 0; i < m; i++)
         {
@@ -328,7 +379,13 @@ int main()
             cin >> u >> v >> weight;
             graph[u].push_back({v, weight});
             x[u][v]=weight;
-            //graph[v].push_back({u, weight});
+            x[v][u]=weight;
+            graph[v].push_back({u, weight});
+            p[i] = {weight,{u,v}};
+
+            from[i] = u;
+            to[i] = v;
+            we[i] = weight;
         }
 
         first_node = -1;
@@ -341,13 +398,46 @@ int main()
             }
         }
 
+        cout<<"1-negative  2-positive ( graph ) "<<endl;
+        int negative ;
+        cin>>negative;
+        if(negative==1)
+        {
+            bellmanford(first_node);
+            print(dist,m);
+            return 0;
+        }
+
         dijkstra(first_node, graph, n);
+
         vector<vector<ll>>f = Floyd_Warshall(x,n);
         print(f,n);
+
+        sort(p,p+m);
+        cout<<"minimum spanning tree is : "<<kruskal(p)<<endl;
+        /*
+
+        1 2 4
+        1 3 8
+        2 3 11
+        3 4 7
+        3 6 1
+        2 5 8
+        4 5 2
+        4 6 6
+        6 7 2
+        5 7 4
+        9 8 9
+        7 8 10
+        9 7 14
+        5 9 7
+
+        */
     }
 
     else
     {
+        vector<int>graph[n+1];
         for(int i=0; i<m; i++)
         {
             int r,c;
@@ -389,12 +479,6 @@ int main()
 
     }
 
-
-
-
-
-
 }
-
 
 

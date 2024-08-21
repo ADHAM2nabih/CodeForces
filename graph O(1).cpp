@@ -39,9 +39,7 @@ void print(vector<vector<ll>>graph,int v)
         cout<<i<< " : ";
         for (int j = 1; j <= v; j++)
         {
-            if(i!=j)cout << graph[i][j] << "    ";
-            else cout<<"  .  ";
-
+            cout << graph[i][j] << "    ";
         }
         cout << endl;
     }
@@ -288,8 +286,9 @@ bool bellmanford(int source)
 
 ///////////////////////////////////////////////////
 
-vector<vector<ll>> Floyd_Warshall(vector<vector<ll>>v,int n)
+pair<vector<vector<ll>>,bool> Floyd_Warshall(vector<vector<ll>>v,int n)
 {
+    bool flag =0;
     for(int k=1; k<=n; k++)
     {
         for(int i=1; i<=n; i++)
@@ -300,7 +299,15 @@ vector<vector<ll>> Floyd_Warshall(vector<vector<ll>>v,int n)
             }
         }
     }
-    return v;
+    for(int i=1; i<=n; i++)
+    {
+        if(v[i][i]<0)
+        {
+            flag=1;
+            break;
+        }
+    }
+    return {v,flag};
 }
 
 ////////////////////////////////////////////////////
@@ -384,11 +391,11 @@ int main()
             cin >> u >> v >> weight;
             graph[u].push_back({v, weight});
             x[u][v]=weight;
-            x[v][u]=weight;
+            x[v][u]=weight; // detecting negative cycles in floyd warshall
             graph[v].push_back({u, weight});
             p[i] = {weight,{u,v}};
 
-            from[i] = u;
+            from[i] = u; //bellman ford
             to[i] = v;
             we[i] = weight;
         }
@@ -408,15 +415,20 @@ int main()
         cin>>negative;
         if(negative==1)
         {
-            cout<<"there is a negative cycle : "<<bellmanford(first_node)<<endl;
-            print(dist,m);
+            cout<<"there is a negative cycle using bellmanford : "<<bellmanford(first_node)<<endl;
+            //print(dist,m);   //if you want to print make a lil change in the original function
+
+            pair<vector<vector<ll>>,bool>f = Floyd_Warshall(x,n);
+            cout << "Negative cycle detected by floyd warshall : "<<f.second <<endl;
+            //print(f.first,n); //if you want to print make a lil change in the original function
+
             return 0;
         }
 
         dijkstra(first_node, graph, n);
 
-        vector<vector<ll>>f = Floyd_Warshall(x,n);
-        print(f,n);
+        pair<vector<vector<ll>>,bool>f = Floyd_Warshall(x,n);
+        print(f.first,n);
 
         sort(p,p+m);
         cout<<"minimum spanning tree is : "<<kruskal(p)<<endl;
@@ -483,12 +495,6 @@ int main()
         }
 
     }
-
-
-
-
-
-
 }
 
 

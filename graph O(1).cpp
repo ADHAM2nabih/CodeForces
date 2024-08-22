@@ -116,8 +116,12 @@ int shortest_path(int start,int target,vector<int>graph[])
 
     while (!q.empty())
     {
-        int node = q.front().first, dist = q.front().second,n =graph[node].size();
+        int node = q.front().first ,
+            dist = q.front().second ,
+            n = graph[node].size();
+
         q.pop();
+
         for (int i=0; i<n; i++)
         {
             if (graph[node][i] == target)
@@ -158,17 +162,17 @@ bool isCyclic_util_directed(vector<int> adj[], vector<bool> visited, int curr)
 
 bool isCyclic_directed(int V, vector<int> adj[])
 {
-    vector<bool> visited(V,false);
+    vector<bool> visited(V+1,false);
     bool f = false;
 
-    for(int i=0; i<V; ++i)
+    for(int i=1; i<=V; ++i)
     {
         visited[i] = true;
         int x = adj[i].size();
         for(int j=0; j<x; ++j)
         {
-            f = isCyclic_util_directed(adj,visited,adj[i][j]);
-            if(f==true)
+
+            if(isCyclic_util_directed(adj,visited,adj[i][j]))
                 return true;
         }
         visited[i] = false;
@@ -195,8 +199,8 @@ bool isCyclic_util_undirected(vector<int> adj[], vector<int> visited, int curr)
             visited[adj[curr][i]] = 2;
         else
         {
-            f = isCyclic_util_undirected(adj, visited, adj[curr][i]);
-            if(f==true)
+
+            if(isCyclic_util_undirected(adj, visited, adj[curr][i]))
                 return true;
         }
     }
@@ -205,9 +209,9 @@ bool isCyclic_util_undirected(vector<int> adj[], vector<int> visited, int curr)
 
 bool isCyclic_undirected(int V,vector<int> adj[])
 {
-    vector<int> visited(V,0);
+    vector<int> visited(V+1,0);
     bool f = false;
-    for(int i=0; i<V; ++i)
+    for(int i=1; i<=V; ++i)
     {
         visited[i] = 1;
         int x =adj[i].size();
@@ -495,6 +499,7 @@ int main()
         }
 
     }
+
 }
 
 
